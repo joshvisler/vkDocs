@@ -1,1 +1,1 @@
-include ':vksdk_library',':app'
+include ':vksdk_library', ':app', ':picasso-2.5.2'
