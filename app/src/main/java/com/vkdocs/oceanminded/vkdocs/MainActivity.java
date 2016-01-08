@@ -53,24 +53,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    private static String sTokenKey = "VK_ACCESS_TOKEN";
-    private static final String[] sMyScope = new String[]{
-            VKScope.FRIENDS,
-            VKScope.WALL,
-            VKScope.PHOTOS,
-            VKScope.NOHTTPS,
-            VKScope.MESSAGES,
-            VKScope.DOCS
-    };
-
-    private Button logout;
-    private Button allDocuments;
-    private EditText textView;
-    private TextView user_textview;
-    private VKRequest request;
-    private boolean isResumed = true;//Проверка - пользователь не авторизован
-    private VKRequestHelper vkRequestHelper;
-    private ImageView photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,100 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        logout = (Button)findViewById(R.id.logout_button);
-        allDocuments = (Button)findViewById(R.id.alldocuments_button);
-        textView = (EditText)findViewById(R.id.textView);
-        user_textview = (TextView) findViewById(R.id.user_textview);
-        photo = (ImageView) findViewById(R.id.photo);
-        textView.setText("sda");
-        final MainActivity activity = this;
-        //add vk api
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                    switch (res) {
-                        case LoggedOut:
-                            logout.setVisibility(View.INVISIBLE);
-                            VKSdk.login(activity,sMyScope);
-                            break;
-                        case LoggedIn:
-                            logout.setVisibility(View.VISIBLE);
-                            break;
-                        case Pending:
-                            break;
-                        case Unknown:
-                            break;
-                    }
-            }
-            @Override
-            public void onError(VKError error) {
-
-            }
-        });
-
-
-        View.OnClickListener logoutListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VKSdk.logout();
-            }
-        };
-
-        View.OnClickListener allDocumentsListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String FIELDS = "photo, photo_50, photo_100, photo_200, city, sex";
-                request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, FIELDS));
-                request.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        VKList<VKApiUserFull> list = (VKList<VKApiUserFull>) response.parsedModel;
-                        VKApiUserFull user = list.get(0);
-                        Log.d("hello", response.json.toString());
-                        setResponseText(" "+user.first_name + " " + user.last_name);
-                        Picasso.with(getApplicationContext()).load(user.photo_100).into(photo);
-                    }
-                    @Override
-                    public void onError(VKError error){
-                            super.onError(error);
-                        Log.d("hello", error.toString());
-                    }
-                });
-
-                VKParameters params = VKParameters.from("domain", "mr_unpredictability", "message", textView.getText().toString());
-                VKRequest request = new VKRequest("messages.send", params);
-                request.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        Log.d("hello", response.json.toString());
-                    }
-
-                    @Override
-                    public void onError(VKError error) {
-                        super.onError(error);
-                        Log.d("hello", error.toString());
-                    }
-                });
-            }
-        };
-
-        logout.setOnClickListener(logoutListener);
-        allDocuments.setOnClickListener(allDocumentsListener);
-
-
-
-
     }
-
-    protected void setResponseText(String text) {
-        user_textview.setText(user_textview.getText()+ text);
-    }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -188,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -206,20 +93,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-// Пользователь успешно авторизовался
-            }
-            @Override
-            public void onError(VKError error) {
-// Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-            }
-        })) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
 }
