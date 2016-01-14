@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_new_doc"
+            android:icon="@drawable/ic_plus"
+            android:title="новый документ" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@android:drawable/arrow_down_float"
+                android:title="выйти" />
+
+        </menu>
+    </item>
+
+</menu>
