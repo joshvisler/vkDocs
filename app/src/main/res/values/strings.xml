@@ -8,8 +8,6 @@
     <string name="files">файлы</string>
     <integer name="com_vk_sdk_AppId">5204619</integer>
     <string name="title_activity_example">exampleActivity</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
 </resources>
