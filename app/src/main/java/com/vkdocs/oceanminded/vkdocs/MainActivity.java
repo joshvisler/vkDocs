@@ -1,7 +1,8 @@
 package com.vkdocs.oceanminded.vkdocs;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -13,17 +14,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
-import com.vk.sdk.VKScope;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiUser;
+import com.vk.sdk.api.model.VKList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TabLayout tabLayout;
@@ -32,17 +41,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ImageView userAvatar;
-    private boolean isResumed = true;
-    private static final String[] sMyScope = new String[]{
-            VKScope.FRIENDS,
-            VKScope.WALL,
-            VKScope.PHOTOS,
-            VKScope.NOHTTPS,
-            VKScope.MESSAGES,
-            VKScope.DOCS
-    };
-
-
+    private NavigationView navigationView;
+    private TextView userName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,36 +51,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         guiInitialized();//create gui
 
 
-        final Activity activity = MainActivity.this;
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                if (isResumed) {
-                    switch (res) {
-                        case LoggedOut:
-                            //showLogin();
-                            VKSdk.login(activity, sMyScope);
-                            break;
-                        case LoggedIn:
-                            VKSdk.login(activity, sMyScope);
-                            //showLogout();
-                            break;
-                        case Pending:
-                            break;
-                        case Unknown:
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-
-            }
-        });
     }
 
-    
+
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -119,15 +92,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setupWithViewPager(viewPager);
         //tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         //tabLayout.setTabMode(BIND_AUTO_CREATE);
-        //add navigarion drawer
+        //add navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //set user avatar and user name
+        getUserData();
+
+    }
+
+    public String getUserData()
+    {
+
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "id,first_name,last_name,photo_50"));
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                VKList<VKApiUser> usersArray = (VKList<VKApiUser>) response.parsedModel;
+                for (VKApiUser user : usersArray) {
+                    userAvatar = (ImageView) findViewById(R.id.user_avatar_imageview);
+                    userName = (TextView) findViewById(R.id.user_name_textview);
+                    //set user avatar to drawer
+                    Picasso.with(getApplicationContext()).load(user.photo_50).resize(36,36).into(userAvatar);
+                    //set user name to drawer
+                    userName.setText(user.first_name + " " + user.last_name);
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+            }
+
+            @Override
+            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                super.attemptFailed(request, attemptNumber, totalAttempts);
+            }
+        });
+        return null;
     }
 
     @Override
@@ -146,10 +155,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_new_doc) {
-            // Handle the camera action
-        } else if (id == R.id.nav_exit) {
-
+        if (id == R.id.nav_exit_account) {
+            VKSdk.logout();
+            Intent openLoginActivity = new Intent(this,LoginActivity.class);
+            startActivity(openLoginActivity);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -170,23 +179,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                // User passed Authorization
 
-            }
-
-            @Override
-            public void onError(VKError error) {
-                // User didn't pass Authorization
-            }
-        };
-
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
 }

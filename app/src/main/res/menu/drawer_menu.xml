@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <item
-            android:id="@+id/user"
-            android:icon="@drawable/useravatar"
-            android:title="Николай Гаращенко" />
-
 
 
     <item android:title="Работа с документами">
@@ -16,11 +11,11 @@
                 android:title="новый документ" />
             <item
                 android:id="@+id/nav_find_doc"
-                android:icon="@drawable/ic_plus"
+                android:icon="@drawable/ic_search_white_24dp"
                 android:title="найти документ" />
             <item
                 android:id="@+id/nav_downloads_docs"
-                android:icon="@drawable/ic_plus"
+                android:icon="@drawable/ic_file_download_white_24dp"
                 android:title="загуженые документы" />
         </menu>
     </item>
