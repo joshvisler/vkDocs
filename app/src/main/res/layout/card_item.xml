@@ -10,11 +10,12 @@
         android:layout_gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp">
+        android:layout_marginBottom="16dp">
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#ffffff">
+            android:background="#ffffff"
+            android:paddingBottom="16dp">
 
             <ImageView
                 android:layout_width="48dp"
@@ -23,7 +24,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_margin="16dp"
-                android:background="#ffffff" />
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_book"
+                android:visibility="visible" />
+
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,6 +42,9 @@
                 android:text="Microsoft.Msagl.GraphViewerGdi.dll"
                 android:layout_marginRight="32dp" />
 
+
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,8 +54,8 @@
                 android:layout_alignLeft="@+id/doc_name"
                 android:layout_alignStart="@+id/doc_name"
                 android:layout_marginTop="8dp"
-                android:textSize="12sp"
-                android:layout_marginBottom="16dp" />
+                android:textSize="12sp" />
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

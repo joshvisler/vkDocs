@@ -65,9 +65,25 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
         holder.documentTitle.setText(documentslist.get(position).title);
         holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", "+convertDate(documentslist.get(position).date));
-        if(documentslist.get(position).isImage() || documentslist.get(position).isGif())
-        Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
-        else holder.documentIcon.setImageResource(R.drawable.ic_menu_camera);
+
+        if(documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
+            Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
+        }
+        else
+        if(documentslist.get(position).isDocument() ) {
+           holder.documentIcon.setImageResource(R.drawable.file_document);
+        }
+        else
+        if(documentslist.get(position).ismIsArchive() ) {
+            holder.documentIcon.setImageResource(R.drawable.archive);
+        }
+        else
+        if(documentslist.get(position).ismIsBook() ) {
+            holder.documentIcon.setImageResource(R.drawable.book);
+        }
+        else holder.documentIcon.setImageResource(R.drawable.file);
+
+
     }
 
     public String convertDate(long unixdate)
@@ -86,7 +102,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     public String convertSize(long unixsize)
     {
         String result = ""+unixsize;
-        //result = "result.length() = "+result.length();
 
         switch (result.length()){
             case 1: result += " Б";;
