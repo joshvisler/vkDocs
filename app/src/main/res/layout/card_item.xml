@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp">
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffffff">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/doc_icon"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="16dp"
+                android:background="#ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/doc_name"
+                android:layout_alignTop="@+id/doc_icon"
+                android:layout_toRightOf="@+id/doc_icon"
+                android:layout_toEndOf="@+id/doc_icon"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:text="Microsoft.Msagl.GraphViewerGdi.dll"
+                android:layout_marginRight="32dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="102 КБ, вчера в 22:19"
+                android:id="@+id/doc_info"
+                android:layout_below="@+id/doc_name"
+                android:layout_alignLeft="@+id/doc_name"
+                android:layout_alignStart="@+id/doc_name"
+                android:layout_marginTop="8dp"
+                android:textSize="12sp"
+                android:layout_marginBottom="16dp" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>

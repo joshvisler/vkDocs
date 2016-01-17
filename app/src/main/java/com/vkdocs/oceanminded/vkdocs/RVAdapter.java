@@ -1,8 +1,11 @@
+/*
+
+*/
+
 package com.vkdocs.oceanminded.vkdocs;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiDocument;
-import com.vk.sdk.api.model.VKDocsArray;
 
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +53,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     @Override
     public DocumentsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.doc_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
         DocumentsHolder pvh = new DocumentsHolder(v);
 
         return pvh;
@@ -69,9 +64,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
 
         holder.documentTitle.setText(documentslist.get(position).title);
-        holder.documentInfo.setText(convertDate(documentslist.get(position).date));
+        holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", "+convertDate(documentslist.get(position).date));
         if(documentslist.get(position).isImage() || documentslist.get(position).isGif())
-        Picasso.with(context).load(documentslist.get(position).photo_100).resize(50,50).into(holder.documentIcon);
+        Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
         else holder.documentIcon.setImageResource(R.drawable.ic_menu_camera);
     }
 
@@ -85,8 +80,36 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy в H:m", russian);
         String formatedDate = sdf.format(date);
-
         return formatedDate;
+    }
+
+    public String convertSize(long unixsize)
+    {
+        String result = ""+unixsize;
+        //result = "result.length() = "+result.length();
+
+        switch (result.length()){
+            case 1: result += " Б";;
+                break;
+            case 2: result += " Б";
+                break;
+            case 3: result += " Б";
+                break;
+            case 4: result = result.subSequence(0,1) + " КБ";
+                break;
+            case 5:  result = result.subSequence(0,2) + " КБ";
+                break;
+            case 6:  result = result.subSequence(0,3) + " КБ";
+                break;
+            case 7:  result = result.subSequence(0,1) + " МБ";
+                break;
+            case 8:  result = result.subSequence(0,2) + " МБ";
+                break;
+            case 9:  result = result.subSequence(0,3) + " МБ";
+                break;
+        }
+
+        return result;
     }
 
 
