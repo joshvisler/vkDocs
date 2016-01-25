@@ -1,36 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-
-    <item android:title="Работа с документами">
-        <menu>
             <item
                 android:id="@+id/nav_new_doc"
                 android:icon="@drawable/ic_plus"
-                android:title="новый документ" />
+                android:title="Новый документ" />
             <item
                 android:id="@+id/nav_find_doc"
                 android:icon="@drawable/ic_search_white_24dp"
-                android:title="найти документ" />
+                android:title="Найти документ" />
             <item
                 android:id="@+id/nav_downloads_docs"
                 android:icon="@drawable/ic_file_download_white_24dp"
-                android:title="загуженые документы" />
-        </menu>
-    </item>
-    <item android:title="Аккаунт">
-        <menu>
+                android:title="Загуженые документы" />
             <item
                 android:id="@+id/nav_exit_account"
-                android:title="выйти" />
+                android:icon="@android:drawable/btn_default"
+                android:title="Выйти" />
             <item
                 android:id="@+id/nav_settings_account"
-                android:title="настройки" />
-</menu>
-    </item>
-
-
-
+                android:icon="@android:drawable/ic_menu_preferences"
+                android:title="Настройки" />
 
 </menu>

@@ -2,18 +2,26 @@
 
 */
 
-package com.vkdocs.oceanminded.vkdocs;
+package com.vkdocs.oceanminded.vkdocs.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.vk.sdk.api.model.VKApiDocument;
+import com.vkdocs.oceanminded.vkdocs.Activitys.ImageActivity;
+import com.vkdocs.oceanminded.vkdocs.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,29 +35,33 @@ import java.util.Locale;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
     List<VKApiDocument> documentslist;
-    Context context;
-
+    public Context context;
+    Locale russian = new Locale("ru");
+    String[] newMonths = {
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"};
+    private Bitmap bitmap;
 
     public static class DocumentsHolder extends RecyclerView.ViewHolder{
         TextView documentTitle;
         TextView documentInfo;
         ImageView documentIcon;
-
+        TextView documentIconText;
     public DocumentsHolder(View itemView) {
         super(itemView);
         documentTitle = (TextView) itemView.findViewById(R.id.doc_name);
         documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
-        documentIcon = (ImageView) itemView.findViewById(R.id.doc_icon);
+        documentIcon = (ImageView) itemView.findViewById(R.id.doc_image);
+        documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
+
 
     }
 }
 
     public RVAdapter(List<VKApiDocument> list) {
         this.documentslist = new ArrayList<>(list);
-        //for (VKApiDocument doc : documentslist) {
-            //Log.i("list.size", ""+documentslist.size());
-        //}
     }
+
     @Override
     public DocumentsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
@@ -60,41 +72,48 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
     @Override
-    public void onBindViewHolder(DocumentsHolder holder, int position) {
+    public void onBindViewHolder(final DocumentsHolder holder, int position) {
 
 
-        holder.documentTitle.setText(documentslist.get(position).title);
-        holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", "+convertDate(documentslist.get(position).date));
+        holder.documentTitle.setText(title(documentslist.get(position).title));
+        holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", " + convertDate(documentslist.get(position).date));
+
 
         if(documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
-            Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
+            holder.documentIconText.setText("");
+            Glide.with(context)
+                    .load(documentslist.get(position).photo_100).centerCrop()
+                    .into(holder.documentIcon);
         }
-        else
-        if(documentslist.get(position).isDocument() ) {
-           holder.documentIcon.setImageResource(R.drawable.file_document);
+        else{
+            holder.documentIconText.setText(documentslist.get(position).ext);
+            holder.documentIcon.setImageDrawable(new ColorDrawable(Color.parseColor("#e9ecf1")));
         }
-        else
-        if(documentslist.get(position).ismIsArchive() ) {
-            holder.documentIcon.setImageResource(R.drawable.archive);
-        }
-        else
-        if(documentslist.get(position).ismIsBook() ) {
-            holder.documentIcon.setImageResource(R.drawable.book);
-        }
-        else holder.documentIcon.setImageResource(R.drawable.file);
 
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.documentIconText.getText() == "") {
+                    Intent open = new Intent(context, ImageActivity.class);
+                    context.startActivity(open);
+                }
+            }
+        });
     }
 
-    public String convertDate(long unixdate)
-    {
-        Date date = new Date(unixdate * 1000);
-        Locale russian = new Locale("ru");
-        String[] newMonths = {
-                "января", "февраля", "марта", "апреля", "мая", "июня",
-                "июля", "августа", "сентября", "октября", "ноября", "декабря"};
 
+
+    public  String title(String s){
+        if(s.length() >=30){
+            s = s.substring(0,30) + "...";
+        }
+        return s;
+    }
+
+
+    public String convertDate(long unixdate) {
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy в H:m", russian);
+        Date date = new Date(unixdate * 1000);
         String formatedDate = sdf.format(date);
         return formatedDate;
     }
@@ -123,7 +142,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             case 9:  result = result.subSequence(0,3) + " МБ";
                 break;
         }
-
         return result;
     }
 

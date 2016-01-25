@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
+import com.vkdocs.oceanminded.vkdocs.Activitys.LoginActivity;
 
 public class Application extends android.app.Application {
 
