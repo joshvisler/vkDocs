@@ -53,8 +53,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
         documentIcon = (ImageView) itemView.findViewById(R.id.doc_image);
         documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
-
-
     }
 }
 
@@ -72,7 +70,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final DocumentsHolder holder, int position) {
+    public void onBindViewHolder(final DocumentsHolder holder, final int position) {
 
 
         holder.documentTitle.setText(title(documentslist.get(position).title));
@@ -95,6 +93,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             public void onClick(View v) {
                 if(holder.documentIconText.getText() == "") {
                     Intent open = new Intent(context, ImageActivity.class);
+                    open.putExtra("url",documentslist.get(position).url );
                     context.startActivity(open);
                 }
             }
