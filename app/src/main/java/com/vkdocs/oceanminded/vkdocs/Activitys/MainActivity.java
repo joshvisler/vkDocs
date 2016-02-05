@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         adapter.addFragment(new AnimationFragment(), "АНИМАЦИЯ");
         adapter.addFragment(new ImagesFragment(), "ИЗОБРАЖЕНИЯ");
         adapter.addFragment(new OtherFragment(), "ПРОЧИЕ");
-
+        adapter.addFragment(new OtherFragment(), "ЗАГРУЖЕННЫЕ");
         viewPager.setAdapter(adapter);
 
 
