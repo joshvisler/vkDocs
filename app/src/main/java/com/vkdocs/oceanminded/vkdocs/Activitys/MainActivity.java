@@ -2,7 +2,6 @@ package com.vkdocs.oceanminded.vkdocs.Activitys;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,8 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -26,8 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -38,6 +34,7 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiUser;
 import com.vk.sdk.api.model.VKList;
 import com.vkdocs.oceanminded.vkdocs.Adapters.ViewPagerAdapte;
+import com.vkdocs.oceanminded.vkdocs.CircleTransform;
 import com.vkdocs.oceanminded.vkdocs.Fragments.AllDocumentsFragment;
 import com.vkdocs.oceanminded.vkdocs.Fragments.AnimationFragment;
 import com.vkdocs.oceanminded.vkdocs.Fragments.ArchivsFragment;
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.i("MA","start");
         guiInitialized();//create gui
 
     }
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         adapter.addFragment(new AnimationFragment(), "АНИМАЦИЯ");
         adapter.addFragment(new ImagesFragment(), "ИЗОБРАЖЕНИЯ");
         adapter.addFragment(new OtherFragment(), "ПРОЧИЕ");
-
+        adapter.addFragment(new OtherFragment(), "ЗАГРУЖЕННЫЕ");
         viewPager.setAdapter(adapter);
 
 
@@ -149,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     //set user avatar to drawer
                     userAvatar = (ImageView) findViewById(R.id.user_avatar_imageview);
                     userName = (TextView) findViewById(R.id.user_name_textview);
-                    Glide.with(getApplicationContext()).load(user.photo_100).asBitmap().centerCrop().into(new BitmapImageViewTarget(userAvatar) {
+                    /*Glide.with(getApplicationContext()).load(user.photo_100).asBitmap().centerCrop().into(new BitmapImageViewTarget(userAvatar) {
                         @Override
                         protected void setResource(Bitmap resource) {
                             RoundedBitmapDrawable circularBitmapDrawable =
@@ -157,7 +154,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             circularBitmapDrawable.setCircular(true);
                             userAvatar.setImageDrawable(circularBitmapDrawable);
                         }
-                    });
+                    });*/
+
+                    Picasso.with(getApplicationContext()).load(user.photo_100).transform(new CircleTransform()).into(userAvatar);
                     //set user name to drawer
                     userName.setText(user.first_name + " " + user.last_name);
                 }

@@ -1,7 +1,6 @@
 package com.vkdocs.oceanminded.vkdocs.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,9 +16,7 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiDocument;
 import com.vk.sdk.api.model.VKDocsArray;
-import com.vkdocs.oceanminded.vkdocs.Activitys.ImageActivity;
 import com.vkdocs.oceanminded.vkdocs.Adapters.RVAdapter;
-import com.vkdocs.oceanminded.vkdocs.Adapters.RecyclerItemClickListener;
 import com.vkdocs.oceanminded.vkdocs.R;
 
 import java.util.ArrayList;

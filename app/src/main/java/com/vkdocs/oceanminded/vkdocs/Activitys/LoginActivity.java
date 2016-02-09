@@ -3,7 +3,9 @@ package com.vkdocs.oceanminded.vkdocs.Activitys;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -13,6 +15,7 @@ import com.vk.sdk.api.VKError;
 import com.vkdocs.oceanminded.vkdocs.R;
 
 public class LoginActivity extends AppCompatActivity {
+    private Button vkauth;
     private static final String[] sMyScope = new String[]{
             VKScope.FRIENDS,
             VKScope.WALL,
@@ -25,14 +28,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState res) {
                 switch (res) {
                     case LoggedOut:
+
                         VKSdk.login(LoginActivity.this, sMyScope);
                         break;
                     case LoggedIn:
@@ -46,10 +47,10 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onError(VKError error) {
-
+                Log.e("error","Error Login "+error.toString());
             }
         });
-        setContentView(R.layout.activity_login);
+        //setContentView(R.layout.activity_login);
 
     }
 

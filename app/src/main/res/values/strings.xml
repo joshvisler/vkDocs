@@ -14,9 +14,11 @@
     <string name="title_activity_files_explore">FilesExplore</string>
     <string name="chooser_title">file</string>
     <string name="title_activity_maps">Map</string>
-
     <string name="title_activity_image">ImageActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="title_activity_doc">name</string>
 
 </resources>

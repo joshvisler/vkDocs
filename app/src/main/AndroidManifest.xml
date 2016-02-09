@@ -3,26 +3,14 @@
     package="com.vkdocs.oceanminded.vkdocs">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".Application"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.vk.sdk.VKServiceActivity"
-            android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent" />
         <activity
             android:name=".Activitys.MainActivity"
             android:label="@string/app_name"
@@ -36,27 +24,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-        <service
-            android:name=".Services.VKDataService"
-            android:exported="false" />
-
+        <activity
+            android:name="com.vk.sdk.VKServiceActivity"
+            android:label="ServiceActivity"
+            android:theme="@style/VK.Transparent" />
         <activity
             android:name=".Activitys.ImageActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_image"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/ImageTheme"></activity>
+        <activity
+            android:name=".Activitys.DocActivity"
+            android:label="@string/title_activity_doc"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

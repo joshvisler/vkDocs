@@ -8,18 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.model.VKApiDocument;
+import com.vkdocs.oceanminded.vkdocs.Activitys.DocActivity;
 import com.vkdocs.oceanminded.vkdocs.Activitys.ImageActivity;
 import com.vkdocs.oceanminded.vkdocs.R;
 
@@ -47,14 +47,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         TextView documentInfo;
         ImageView documentIcon;
         TextView documentIconText;
-    public DocumentsHolder(View itemView) {
-        super(itemView);
-        documentTitle = (TextView) itemView.findViewById(R.id.doc_name);
-        documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
-        documentIcon = (ImageView) itemView.findViewById(R.id.doc_image);
-        documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
+        public DocumentsHolder(View itemView) {
+            super(itemView);
+            documentTitle = (TextView) itemView.findViewById(R.id.doc_name);
+            documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
+            documentIcon = (ImageView) itemView.findViewById(R.id.doc_image);
+            documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
+        }
     }
-}
 
     public RVAdapter(List<VKApiDocument> list) {
         this.documentslist = new ArrayList<>(list);
@@ -71,17 +71,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
     @Override
     public void onBindViewHolder(final DocumentsHolder holder, final int position) {
-
-
         holder.documentTitle.setText(title(documentslist.get(position).title));
         holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", " + convertDate(documentslist.get(position).date));
 
 
         if(documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
             holder.documentIconText.setText("");
-            Glide.with(context)
-                    .load(documentslist.get(position).photo_100).centerCrop()
-                    .into(holder.documentIcon);
+            Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
         }
         else{
             holder.documentIconText.setText(documentslist.get(position).ext);
@@ -91,16 +87,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.documentIconText.getText() == "") {
+                if(documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
                     Intent open = new Intent(context, ImageActivity.class);
-                    open.putExtra("url",documentslist.get(position).url );
+                    open.putExtra("url", documentslist.get(position).url);
+                    context.startActivity(open);
+                }
+
+                else if(documentslist.get(position).isDoc()) {
+                    Intent open = new Intent(context, DocActivity.class);
+                    Log.d("Open ", holder.documentIconText.getText().toString());
+                    //open.putExtra("url",documentslist.get(position).url );
                     context.startActivity(open);
                 }
             }
         });
     }
-
-
 
     public  String title(String s){
         if(s.length() >=30){

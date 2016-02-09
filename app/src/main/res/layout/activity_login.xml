@@ -20,5 +20,6 @@
         android:background="#537599"
         android:textColor="#ffffff"
         android:padding="15dp"
-        android:onClick="onClick" />
+        android:onClick="onClick"
+        android:visibility="invisible" />
 </RelativeLayout>

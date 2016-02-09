@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/login_in"
-        android:icon="@drawable/useravatar"
+
         android:title="войти" />
 </menu>
