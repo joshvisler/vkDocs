@@ -25,7 +25,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:launchMode="singleTask"
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />

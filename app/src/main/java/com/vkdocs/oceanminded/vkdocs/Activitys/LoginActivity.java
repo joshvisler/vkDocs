@@ -1,16 +1,11 @@
 package com.vkdocs.oceanminded.vkdocs.Activitys;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -20,9 +15,7 @@ import com.vk.sdk.api.VKError;
 import com.vkdocs.oceanminded.vkdocs.R;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button noConnectionButton;
-    private TextView noConnectionText;
-
+    private Button vkauth;
     private static final String[] sMyScope = new String[]{
             VKScope.FRIENDS,
             VKScope.WALL,
@@ -35,25 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        noConnectionButton = (Button) findViewById(R.id.noConnection_button);
-        noConnectionText = (TextView) findViewById(R.id.connection_error_text);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        isOnline(getApplicationContext());
-        noConnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                connection();
-            }
-        });
-
-
-    }
-
-    private void connection(){
         VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState res) {
@@ -71,13 +45,15 @@ public class LoginActivity extends AppCompatActivity {
                         break;
                 }
             }
-
             @Override
             public void onError(VKError error) {
-                Log.e("error", "Error Login " + error.toString());
+                Log.e("error","Error Login "+error.toString());
             }
         });
+        //setContentView(R.layout.activity_login);
+
     }
+
 
     private void userLoggedIn()
     {
@@ -108,20 +84,5 @@ public class LoginActivity extends AppCompatActivity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-
-    public  boolean isOnline(Context context)
-    {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            connection();
-            return true;
-        }
-        noConnectionButton.setVisibility(View.VISIBLE);
-        noConnectionText.setVisibility(View.VISIBLE);
-        return false;
     }
 }
