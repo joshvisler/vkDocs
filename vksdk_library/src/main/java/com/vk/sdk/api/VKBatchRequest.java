@@ -27,6 +27,8 @@ import android.os.Looper;
 import com.vk.sdk.VKObject;
 import com.vk.sdk.api.httpClient.VKHttpClient;
 
+import org.json.JSONException;
+
 /**
  * Used for execution bunch of methods at time, and receive results of that methods in array
  */
@@ -70,7 +72,7 @@ public class VKBatchRequest extends VKObject {
                     final VKRequest.VKRequestListener originalListener = request.requestListener;
                     request.setRequestListener(new VKRequest.VKRequestListener() {
                         @Override
-                        public void onComplete(VKResponse response) {
+                        public void onComplete(VKResponse response) throws JSONException {
                             provideResponse(response);
                         }
 
@@ -105,7 +107,7 @@ public class VKBatchRequest extends VKObject {
 
     }
 
-    protected void provideResponse(VKResponse response) {
+    protected void provideResponse(VKResponse response) throws JSONException {
         mResponses[indexOfRequest(response.request)] = response;
         for (VKResponse resp : mResponses) {
             if (resp == null) return;

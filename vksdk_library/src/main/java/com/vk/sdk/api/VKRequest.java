@@ -53,7 +53,7 @@ import java.util.Locale;
 /**
  * Class for execution API-requests.
  */
-public class VKRequest extends VKObject {
+public class VKRequest extends VKObject  {
 
 
     public enum VKProgressType {
@@ -331,7 +331,7 @@ public class VKRequest extends VKObject {
     private VKJsonOperation.VKJSONOperationCompleteListener getHttpListener() {
         return new VKJsonOperation.VKJSONOperationCompleteListener() {
             @Override
-            public void onComplete(VKJsonOperation operation, JSONObject response) {
+            public void onComplete(VKJsonOperation operation, JSONObject response) throws JSONException {
                 if (response.has("error")) {
                     try {
                         VKError error = new VKError(response.getJSONObject("error"));
@@ -356,7 +356,7 @@ public class VKRequest extends VKObject {
             }
 
             @Override
-            public void onError(VKJsonOperation operation, VKError error) {
+            public void onError(VKJsonOperation operation, VKError error) throws JSONException {
                 //Хак для проверки того, что корректно распарсился ответ при заливке картинок
                 if (error.errorCode != VKError.VK_CANCELED &&
                         error.errorCode != VKError.VK_API_ERROR &&
@@ -456,7 +456,7 @@ public class VKRequest extends VKObject {
      * @param jsonResponse response from API
      * @param parsedModel  model parsed from json
      */
-    private void provideResponse(final JSONObject jsonResponse, Object parsedModel) {
+    private void provideResponse(final JSONObject jsonResponse, Object parsedModel) throws JSONException {
         final VKResponse response = new VKResponse();
         response.request = this;
         response.json = jsonResponse;
@@ -479,7 +479,11 @@ public class VKRequest extends VKObject {
                 }
 
                 if (useLooperForCallListener && requestListener != null) {
-                    requestListener.onComplete(response);
+                    try {
+                        requestListener.onComplete(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -631,7 +635,7 @@ public class VKRequest extends VKObject {
          *
          * @param response response from VKRequest
          */
-        public void onComplete(VKResponse response) {
+        public void onComplete(VKResponse response) throws JSONException {
         }
 
         /**

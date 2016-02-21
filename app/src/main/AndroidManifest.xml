@@ -27,17 +27,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:launchMode="singleTask"
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
+            android:launchMode="singleTask"
             android:theme="@style/VK.Transparent" />
         <activity
             android:name=".Activitys.ImageActivity"
-            android:theme="@style/ImageTheme"></activity>
+            android:theme="@style/ImageTheme" />
         <activity
             android:name=".Activitys.DocActivity"
             android:label="@string/title_activity_doc"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activitys.SettingsActivity" />
+        <activity android:name=".Activitys.ChoseFile"></activity>
     </application>
 
 </manifest>

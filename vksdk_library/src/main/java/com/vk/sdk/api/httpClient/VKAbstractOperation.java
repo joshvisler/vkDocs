@@ -25,6 +25,8 @@ import android.support.annotation.Nullable;
 
 import com.vk.sdk.api.VKError;
 
+import org.json.JSONException;
+
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -84,7 +86,11 @@ public abstract class VKAbstractOperation {
             @Override
             public void run() {
                 if (mCompleteListener != null) {
-                    mCompleteListener.onComplete();
+                    try {
+                        mCompleteListener.onComplete();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -184,12 +190,12 @@ public abstract class VKAbstractOperation {
     }
 
     public interface VKOperationCompleteListener {
-        void onComplete();
+        void onComplete() throws JSONException;
     }
 
     public static abstract class VKAbstractCompleteListener<OperationType extends VKAbstractOperation, ResponseType extends Object> {
-        public abstract void onComplete(OperationType operation, ResponseType response);
+        public abstract void onComplete(OperationType operation, ResponseType response) throws JSONException;
 
-        public abstract void onError(OperationType operation, VKError error);
+        public abstract void onError(OperationType operation, VKError error) throws JSONException;
     }
 }

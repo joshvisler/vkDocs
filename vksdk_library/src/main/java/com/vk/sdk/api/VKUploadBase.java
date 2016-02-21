@@ -63,7 +63,7 @@ public abstract class VKUploadBase extends VKRequest {
 
             VKUploadBase.this.requestListener = new VKRequestListener() {
                 @Override
-                public void onComplete(VKResponse response) {
+                public void onComplete(VKResponse response) throws JSONException {
                     setState(VKOperationState.Finished);
                     response.request = VKUploadBase.this;
                     if (originalListener != null) {
@@ -127,7 +127,7 @@ public abstract class VKUploadBase extends VKRequest {
                             VKRequest saveRequest = getSaveRequest(response);
                             saveRequest.setRequestListener(new VKRequestListener() {
                                 @Override
-                                public void onComplete(VKResponse response) {
+                                public void onComplete(VKResponse response) throws JSONException {
                                     if (requestListener != null) {
                                         requestListener.onComplete(response);
                                     }

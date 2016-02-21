@@ -21,6 +21,8 @@ import com.vkdocs.oceanminded.vkdocs.Adapters.RVAdapter;
 import com.vkdocs.oceanminded.vkdocs.R;
 import com.vkdocs.oceanminded.vkdocs.Services.VKDataService;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +83,7 @@ public class TextsFragment extends Fragment {
             }
 
             @Override
-            public void onComplete(VKResponse response) {
+            public void onComplete(VKResponse response) throws JSONException {
                 super.onComplete(response);
                 VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
                 for (VKApiDocument doc : docsArray) {

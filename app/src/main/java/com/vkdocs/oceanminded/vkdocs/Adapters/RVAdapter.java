@@ -200,10 +200,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                 URL url = new URL(f_url[0]);
                 URLConnection connection = url.openConnection();
                 connection.connect();
-
                 int lenghtFile = connection.getContentLength();
-
-
                 InputStream in = new BufferedInputStream(url.openStream());
                 FileOutputStream fos = new FileOutputStream(file);
 

@@ -12,6 +12,8 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiDocument;
 import com.vk.sdk.api.model.VKDocsArray;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 
@@ -56,7 +58,7 @@ public class VKDataService extends IntentService {
             }
 
             @Override
-            public void onComplete(VKResponse response) {
+            public void onComplete(VKResponse response) throws JSONException {
                 super.onComplete(response);
                 VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
                 for (VKApiDocument doc : docsArray) {

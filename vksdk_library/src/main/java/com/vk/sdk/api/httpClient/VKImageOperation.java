@@ -26,6 +26,8 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 
+import org.json.JSONException;
+
 public class VKImageOperation extends VKHttpOperation<Bitmap> {
 
     public float imageDensity;
@@ -58,7 +60,7 @@ public class VKImageOperation extends VKHttpOperation<Bitmap> {
     public void setImageOperationListener(final VKImageOperationListener listener) {
         this.setCompleteListener(new VKOperationCompleteListener() {
             @Override
-            public void onComplete() {
+            public void onComplete() throws JSONException {
                 if (VKImageOperation.this.state() != VKOperationState.Finished || mLastException != null) {
                     listener.onError(VKImageOperation.this, generateError(mLastException));
                 } else {
@@ -66,7 +68,11 @@ public class VKImageOperation extends VKHttpOperation<Bitmap> {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onComplete(VKImageOperation.this, result);
+                            try {
+                                listener.onComplete(VKImageOperation.this, result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }
