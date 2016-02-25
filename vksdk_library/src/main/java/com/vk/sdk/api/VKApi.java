@@ -28,7 +28,6 @@ import com.vk.sdk.api.methods.VKApiGroups;
 import com.vk.sdk.api.methods.VKApiMessages;
 import com.vk.sdk.api.methods.VKApiPhotos;
 import com.vk.sdk.api.methods.VKApiUsers;
-import com.vk.sdk.api.methods.VKApiVideo;
 import com.vk.sdk.api.methods.VKApiWall;
 import com.vk.sdk.api.photo.VKUploadAlbumPhotoRequest;
 import com.vk.sdk.api.photo.VKUploadImage;
@@ -156,13 +155,5 @@ public class VKApi {
      */
     public static VKRequest uploadMessagesPhotoRequest(VKUploadImage image) {
         return new VKUploadMessagesPhotoRequest(image);
-    }
-
-    /**
-     * https://vk.com/dev/video
-     * Returns object for preparing requests to audio part of API
-     */
-    public static VKApiVideo video() {
-        return new VKApiVideo();
     }
 }

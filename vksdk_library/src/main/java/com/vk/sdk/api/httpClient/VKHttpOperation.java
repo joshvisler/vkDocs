@@ -25,8 +25,6 @@ import android.support.annotation.Nullable;
 
 import com.vk.sdk.api.VKError;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutorService;
@@ -182,7 +180,7 @@ public class VKHttpOperation<ResponseType> extends VKAbstractOperation {
         this.setCompleteListener(new VKOperationCompleteListener() {
             @SuppressWarnings("unchecked")
             @Override
-            public void onComplete() throws JSONException {
+            public void onComplete() {
                 if (VKHttpOperation.this.state() != VKOperationState.Finished || mLastException != null) {
                     listener.onError((OperationType) VKHttpOperation.this, generateError(mLastException));
                 } else {

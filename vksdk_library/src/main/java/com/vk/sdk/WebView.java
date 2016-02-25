@@ -20,6 +20,11 @@ public class WebView extends android.webkit.WebView {
 	}
 
 	@Override
+	public boolean onCheckIsTextEditor() {
+		return true;
+	}
+
+	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		View view = this;

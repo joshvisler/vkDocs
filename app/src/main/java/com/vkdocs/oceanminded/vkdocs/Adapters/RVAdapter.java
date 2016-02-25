@@ -63,7 +63,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             super(itemView);
             documentTitle = (TextView) itemView.findViewById(R.id.doc_name);
             documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
-            documentIcon = (ImageView) itemView.findViewById(R.id.doc_image);
+            documentIcon = (ImageView) itemView.findViewById(R.id.chooser_folder_icon);
             documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
         }
     }
@@ -80,7 +80,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     @Override
     public DocumentsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.document_item, parent, false);
         DocumentsHolder pvh = new DocumentsHolder(v);
 
         return pvh;

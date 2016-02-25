@@ -80,8 +80,7 @@ public class BooksFragment extends Fragment {
             }
 
             @Override
-            public void onComplete(VKResponse response) throws JSONException {
-                super.onComplete(response);
+            public void onComplete(VKResponse response) {
                 VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
                 for (VKApiDocument doc : docsArray) {
                     documentslist.add(doc);

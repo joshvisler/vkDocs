@@ -58,8 +58,7 @@ public class VKDataService extends IntentService {
             }
 
             @Override
-            public void onComplete(VKResponse response) throws JSONException {
-                super.onComplete(response);
+            public void onComplete(VKResponse response)  {
                 VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
                 for (VKApiDocument doc : docsArray) {
                     docsList.add(doc);

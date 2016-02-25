@@ -1,6 +1,6 @@
 package com.vkdocs.oceanminded.vkdocs.Activitys;
 
-import android.os.Bundle;
+/*import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,3 +52,4 @@ public class ImageActivity extends AppCompatActivity {
     }
 
 }
+*/

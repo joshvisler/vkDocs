@@ -64,9 +64,8 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
      * Document URL for downloading.
      */
     public String url;
-
     /**
-     * Document size (in bytes).
+     * Document date(unicode).
      */
     public long date;
     /**
@@ -91,8 +90,7 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
 
     private boolean mIsGif;
     private boolean mIsImage;
-    private boolean mIsBook;
-    private boolean mIsDoc;
+
 	public VKApiDocument(JSONObject from) throws JSONException
 	{
 		parse(from);
@@ -105,9 +103,9 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
         owner_id = jo.optInt("owner_id");
         title = jo.optString("title");
         size = jo.optLong("size");
+        date = jo.optLong("date");
         ext = jo.optString("ext");
         url = jo.optString("url");
-        date = jo.optLong("date");
         access_key = jo.optString("access_key");
 
         photo_100 = jo.optString("photo_100");
@@ -130,9 +128,9 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
         this.owner_id = in.readInt();
         this.title = in.readString();
         this.size = in.readLong();
+        this.date = in.readLong();
         this.ext = in.readString();
         this.url = in.readString();
-        this.date = in.readLong();
         this.photo_100 = in.readString();
         this.photo_130 = in.readString();
         this.photo = in.readParcelable(VKPhotoSizes.class.getClassLoader());
@@ -162,22 +160,6 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
         return mIsGif;
     }
 
-
-    public boolean isBook() {
-        mIsBook = mIsImage ||
-                "pdf".equals(ext) ||
-                "djvu".equals(ext);
-        return mIsBook;
-    }
-
-    public boolean isDoc() {
-        mIsDoc = mIsImage ||
-                "doc".equals(ext) ||
-                "txt".equals(ext) ||
-                "docx".equals(ext);
-        return mIsDoc;
-    }
-    
     @Override
     public int getId() {
         return id;
@@ -214,9 +196,9 @@ public class VKApiDocument extends VKApiAttachment implements Parcelable, Identi
         dest.writeInt(this.owner_id);
         dest.writeString(this.title);
         dest.writeLong(this.size);
+        dest.writeLong(this.date);
         dest.writeString(this.ext);
         dest.writeString(this.url);
-        dest.writeLong(this.date);
         dest.writeString(this.photo_100);
         dest.writeString(this.photo_130);
         dest.writeParcelable(this.photo, flags);

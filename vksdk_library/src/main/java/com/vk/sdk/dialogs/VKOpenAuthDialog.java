@@ -21,10 +21,8 @@
 
 package com.vk.sdk.dialogs;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,7 +33,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -73,7 +70,7 @@ public class VKOpenAuthDialog implements DialogInterface.OnDismissListener {
 	protected Intent mData;
 	protected int mResCode = Activity.RESULT_OK;
 	protected int mReqCode;
-	protected Dialog mDialog;
+	protected AlertDialog mAlertDialog;
 
 	public void show(@NonNull Activity activity, Bundle bundle, int reqCode, @Nullable VKError vkError) {
 		mVkError = vkError;
@@ -84,8 +81,8 @@ public class VKOpenAuthDialog implements DialogInterface.OnDismissListener {
 		mProgress = mView.findViewById(R.id.progress);
 		mWebView = (WebView) mView.findViewById(R.id.copyUrl);
 
-		final Dialog dialog = new Dialog(activity, R.style.VKAlertDialog);
-		dialog.setContentView(mView);
+		final AlertDialog dialog = new AlertDialog.Builder(activity).setView(mView).create();
+		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialogInterface) {
@@ -93,17 +90,13 @@ public class VKOpenAuthDialog implements DialogInterface.OnDismissListener {
 			}
 		});
 		dialog.setOnDismissListener(this);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			dialog.getWindow().setStatusBarColor(Color.TRANSPARENT);
-		}
 
-		mDialog = dialog;
-		mDialog.show();
+		mAlertDialog = dialog;
+		mAlertDialog.show();
 
 		loadPage();
 	}
 
-	@SuppressLint("SetJavaScriptEnabled")
 	private void loadPage() {
 		try {
 			String urlToLoad;
@@ -240,8 +233,8 @@ public class VKOpenAuthDialog implements DialogInterface.OnDismissListener {
 	}
 
 	private void finish() {
-		if (mDialog != null) {
-			mDialog.dismiss();
+		if (mAlertDialog != null) {
+			mAlertDialog.dismiss();
 		}
 	}
 }
