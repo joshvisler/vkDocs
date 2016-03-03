@@ -21,6 +21,8 @@
 
 package com.vk.sdk.api.methods;
 
+import android.util.Log;
+
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -99,6 +101,7 @@ public class VKApiDocs extends VKApiBase {
      * @return Prepared vk request for doc upload
      */
     public VKRequest uploadDocRequest(File doc, long groupId) {
+        Log.d("File name 2", doc.getName());
         return new VKUploadDocRequest(doc, groupId);
     }
 

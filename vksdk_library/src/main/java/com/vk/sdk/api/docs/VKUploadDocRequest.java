@@ -1,5 +1,7 @@
 package com.vk.sdk.api.docs;
 
+import android.util.Log;
+
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -11,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Map;
 
 public class VKUploadDocRequest extends VKUploadDocBase {
     /**
@@ -20,6 +23,7 @@ public class VKUploadDocRequest extends VKUploadDocBase {
     public VKUploadDocRequest(File doc) {
         super();
         this.mDoc = doc;
+        Log.d("File name",mDoc.getName());
         this.mGroupId = 0;
     }
 
@@ -31,6 +35,7 @@ public class VKUploadDocRequest extends VKUploadDocBase {
     public VKUploadDocRequest(File doc, long groupId) {
         super();
         this.mDoc = doc;
+        Log.d("File name",mDoc.getName());
         this.mGroupId = groupId;
     }
 
@@ -41,11 +46,25 @@ public class VKUploadDocRequest extends VKUploadDocBase {
         return VKApi.docs().getUploadServer();
     }
 
+    /// ВОТ ТУТ вся проблема с наванием файла file
     @Override
     protected VKRequest getSaveRequest(JSONObject response) {
+        Log.d("WWORK",response.toString());
         VKRequest saveRequest;
         try {
-            saveRequest = VKApi.docs().save(new VKParameters(VKJsonHelper.toMap(response)));
+            Log.d("WWORK",VKJsonHelper.toMap(response).toString());
+            //String file = VKJsonHelper.toMap(response).toString().substring(5,VKJsonHelper.toMap(response).toString().length()-1);
+            Map<String,Object> file = VKJsonHelper.toMap(response);
+            file.put("title",mDoc.getName());
+            for (Map.Entry entry : file.entrySet()) {
+                String key = (String) entry.getKey();
+                String value = entry.getValue().toString();
+
+                Log.d("K & V","value "+value+" key "+key);
+                Log.d("value",value);
+            }
+            Log.d("WWO",file.toString());
+            saveRequest = VKApi.docs().save(new VKParameters(file));
         } catch (JSONException e) {
             return null;
         }

@@ -31,6 +31,18 @@ public class ChoseFile extends AppCompatActivity {
     private ArrayList<String> data;
 
     @Override
+    public void onBackPressed() {
+        if(path != "storage/") {
+            if (path.contains("/")) {
+                path = path.substring(0, path.lastIndexOf("/"));
+                createData(path);
+            } else finish();
+        }else finish();
+
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chose_file);
@@ -38,7 +50,7 @@ public class ChoseFile extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         folderRV.setLayoutManager(llm);
         data = new ArrayList<>();
-        createData("/storage/");
+        createData("storage/");
         folderRV.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
