@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setTicker("")
                 .setWhen(System.currentTimeMillis());
         Notification uploadNotification = builder.getNotification();
         nm.notify(666,uploadNotification);

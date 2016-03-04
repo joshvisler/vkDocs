@@ -42,8 +42,8 @@ public class ChooserRVAdapter extends RecyclerView.Adapter<ChooserRVAdapter.Choo
         mdata.clear();
         mdata.addAll(data);
         notifyDataSetChanged();
-
     }
+
     class ChooserHolder extends RecyclerView.ViewHolder implements RecyclerItemClickListener.OnItemClickListener {
 
         TextView fileType;

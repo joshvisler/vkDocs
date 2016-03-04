@@ -77,6 +77,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         }
     }
 
+    public void changeData(List<VKApiDocument> data){
+        documentslist.clear();
+        documentslist.addAll(data);
+        notifyDataSetChanged();
+    }
+
     @Override
     public DocumentsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
