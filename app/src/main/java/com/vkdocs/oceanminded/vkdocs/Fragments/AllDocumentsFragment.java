@@ -88,7 +88,7 @@ public class AllDocumentsFragment extends Fragment {
     }
 
     public ArrayList<VKApiDocument> getDocumentFromServer() {
-        final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
+            final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
         //VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR,"count",20), VKRequest.HttpMethod.GET, VKDocsArray.class);
         VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR), VKRequest.HttpMethod.GET, VKDocsArray.class);
         getdocs.executeSyncWithListener(new VKRequest.VKRequestListener() {
