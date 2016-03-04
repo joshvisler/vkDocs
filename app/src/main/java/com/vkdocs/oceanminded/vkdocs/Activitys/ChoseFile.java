@@ -73,66 +73,8 @@ public class ChoseFile extends AppCompatActivity {
                 }
             }
         }));
-        /*adapter.SetOnItemClickListener(new ChooserRVAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                //createData(adapter.getMpath());
-                //adapter = new ChooserRVAdapter(path);
-                // setTitle(path);
 
-                String filename = data.get(position);
-                Log.d("Clicked path", data.get(position));
-                if (path.endsWith(File.separator)) {
-                    filename = path + filename;
-                } else {
-                    filename = path + File.separator + filename;
-                }
-                if (new File(filename).isDirectory()) {
-                    createData(filename);
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra("file", filename);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-
-            }
-        });*/
         folderRV.setAdapter(adapter);
-
-
-
-
-
-
-
-
-        /*directoryList = (ListView)findViewById(R.id.directoty_list);
-        path = "/storage";,
-        if (getIntent().hasExtra("path")) {
-            path = getIntent().getStringExtra("path");
-        }
-        updateList(path);
-        // Read all files sorted into the values-array
-        directoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String filename = (String) directoryList.getAdapter().getItem(position);
-                if (path.endsWith(File.separator)) {
-                    filename = path + filename;
-                } else {
-                    filename = path + File.separator + filename;
-                }
-                if (new File(filename).isDirectory()) {
-                    updateList(filename);
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra("file", filename);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-            }
-        });*/
     }
 
 

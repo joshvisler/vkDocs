@@ -1,6 +1,9 @@
 package com.vkdocs.oceanminded.vkdocs.Activitys;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -37,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICKFILE_RESULT_CODE = 5;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +115,20 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //add notification
+        final NotificationManager nm = (NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder.setSmallIcon(android.R.drawable.stat_sys_upload)
+                .setTicker("")
+                .setWhen(System.currentTimeMillis());
+        Notification uploadNotification = builder.getNotification();
+        nm.notify(666,uploadNotification);
+
+
+
+
         if (requestCode == PICKFILE_RESULT_CODE && data != null) {
             final String filePath = data.getStringExtra("file");// get path from result
             String path = filePath.substring(0, filePath.lastIndexOf("/"));// get path without name
@@ -121,44 +138,25 @@ public class MainActivity extends AppCompatActivity {
             VKRequest uploadRequest;
             uploadRequest = VKApi.docs().uploadDocRequest(uploadFile); //request for upload file to vk server
 
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Загрузка файла на сервер");
-            progressDialog.setMessage(fileName);
-            progressDialog.setCancelable(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Отмена", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    progressDialog.cancel();
-                }
-            });
 
-            progressDialog.setCanceledOnTouchOutside(true);
-            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    progressDialog.cancel();
-                }
-            });
-            progressDialog.show();
 
             uploadRequest.executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
-                    progressDialog.hide();
+                    nm.cancel(666);
                 }
 
                 @Override
                 public void onError(VKError error) {
                     super.onError(error);
-                    progressDialog.hide();
                     Log.d("Upload Error", error.toString());
+                    nm.cancel(666);
+                    Toast.makeText(getApplicationContext(),"Не удалось загрузить файл",Toast.LENGTH_LONG);
                 }
 
                 @Override
                 public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
                     super.onProgress(progressType, bytesLoaded, bytesTotal);
-                    progressDialog.setProgress((int) bytesLoaded);
                     Log.d("progress", "" + bytesLoaded);
                 }
             });
