@@ -2,15 +2,15 @@ package com.vkdocs.oceanminded.vkdocs.Activitys;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,9 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vkdocs.oceanminded.vkdocs.Adapters.ViewPagerAdapte;
@@ -33,39 +31,58 @@ import com.vkdocs.oceanminded.vkdocs.Fragments.OtherFragment;
 import com.vkdocs.oceanminded.vkdocs.Fragments.TextsFragment;
 import com.vkdocs.oceanminded.vkdocs.R;
 
-import org.json.JSONException;
-
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PICKFILE_RESULT_CODE = 5;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.i("MA", "start");
         guiInitialized();//create gui
+        //viewPager.setVisibility(View.INVISIBLE);
+        //tabLayout.setVisibility(View.INVISIBLE);
     }
 
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapte adapter = new ViewPagerAdapte(getSupportFragmentManager());
-        adapter.addFragment(new AllDocumentsFragment(), "ВСЕ");
-        adapter.addFragment(new TextsFragment(), "ТЕКСТОВЫЕ");
-        adapter.addFragment(new ArchivsFragment(), "АРХИВЫ");
-        adapter.addFragment(new AnimationFragment(), "АНИМАЦИЯ");
-        adapter.addFragment(new ImagesFragment(), "ИЗОБРАЖЕНИЯ");
-        adapter.addFragment(new OtherFragment(), "ПРОЧИЕ");
-        adapter.addFragment(new OtherFragment(), "ЗАГРУЖЕННЫЕ");
+        adapter.addFragment(new AllDocumentsFragment(0), "ВСЕ");
+        adapter.addFragment(new AllDocumentsFragment(1), "ТЕКСТОВЫЕ");
+        adapter.addFragment(new AllDocumentsFragment(2), "АРХИВЫ");
+        adapter.addFragment(new AllDocumentsFragment(3), "АНИМАЦИЯ");
+        adapter.addFragment(new AllDocumentsFragment(4), "ИЗОБРАЖЕНИЯ");
+        adapter.addFragment(new AllDocumentsFragment(8), "ПРОЧИЕ");
+        adapter.addFragment(new AllDocumentsFragment(8), "ЗАГРУЖЕННЫЕ");
         viewPager.setAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        final MenuItem item = menu.findItem(R.id.action_search);
+
+       /* searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("Search",query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("Search",newText);
+                return false;
+            }
+        });
+
+       */
         return true;
     }
 
@@ -123,12 +140,12 @@ public class MainActivity extends AppCompatActivity {
         builder.setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setWhen(System.currentTimeMillis());
         Notification uploadNotification = builder.getNotification();
-        nm.notify(666,uploadNotification);
 
 
 
 
         if (requestCode == PICKFILE_RESULT_CODE && data != null) {
+            nm.notify(666,uploadNotification);
             final String filePath = data.getStringExtra("file");// get path from result
             String path = filePath.substring(0, filePath.lastIndexOf("/"));// get path without name
             String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);//get file name ( for example myText.txt)
@@ -142,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             uploadRequest.executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
+
                     nm.cancel(666);
                 }
 
@@ -163,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
     }
 
 }

@@ -4,11 +4,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,12 +41,13 @@ public class AllDocumentsFragment extends Fragment {
     private List<VKApiDocument> documentslist;
     private RecyclerView documenstListRV;
     private RVAdapter adapter;
-    public static int DOCS_PARAMETR = 0;
+    public  int docParametr;
     public static int DOCS_COUNT = 20;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;;
 
 
-    public AllDocumentsFragment() {
+    public AllDocumentsFragment(int docType) {
+        docParametr = docType;
         // Required empty public constructor
     }
 
@@ -53,6 +59,7 @@ public class AllDocumentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragmenta,container, false);
         notdosc =(TextView) view.findViewById(R.id.notdocs_text);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
@@ -76,6 +83,25 @@ public class AllDocumentsFragment extends Fragment {
         return view;
     }
 
+    public ArrayList<VKApiDocument>  search(String searchQueary){
+        ArrayList<VKApiDocument> result = new ArrayList<>();
+
+        for(VKApiDocument queryDoc : documentslist){
+            if(queryDoc.title.contains(searchQueary)){
+                result.add(queryDoc);
+            }
+        }
+        if (result.isEmpty()){
+            notdosc.setVisibility(View.VISIBLE);
+        }
+        else {
+            notdosc.setVisibility(View.INVISIBLE);
+        }
+
+        return result;
+    }
+
+
 
 
     public void updateData(){
@@ -87,10 +113,49 @@ public class AllDocumentsFragment extends Fragment {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return false;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        //inflater.inflate(R.menu.menu_main, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("Search", query);
+                adapter.changeData(search(query));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.changeData(search(newText));
+                Log.d("Search", newText);
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.d("Search", "closed");
+                adapter.changeData(documentslist);
+                return false;
+            }
+        });
+    }
+
+
+
     public ArrayList<VKApiDocument> getDocumentFromServer() {
             final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
         //VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR,"count",20), VKRequest.HttpMethod.GET, VKDocsArray.class);
-        VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR), VKRequest.HttpMethod.GET, VKDocsArray.class);
+        VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", docParametr), VKRequest.HttpMethod.GET, VKDocsArray.class);
         getdocs.executeSyncWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
@@ -117,6 +182,13 @@ public class AllDocumentsFragment extends Fragment {
                 super.onError(error);
             }
         });
+
+        if (resultList.isEmpty()){
+            notdosc.setVisibility(View.VISIBLE);
+        }
+        else {
+            notdosc.setVisibility(View.INVISIBLE);
+        }
         return resultList;
     }
 
