@@ -2,24 +2,23 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/vk_color"
+    android:background="#ffffff"
     android:weightSum="1">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Редактирование файла"
+        android:text="Редактирование документа"
         android:id="@+id/change_dialog_title"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/vk_color"
         android:textColor="#ffffff"
         android:textStyle="bold"
         android:textSize="16dp"
-        android:padding="4dp"
-        android:layout_weight="0.16" />
+        android:padding="16dp"
+        android:layout_weight="0.16"
+        android:gravity="center" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,23 +26,24 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Название"
         android:id="@+id/change_labale_title"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textSize="12dp"
-        android:textColor="#ffffff" />
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="16dp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/change_doc_title"
-        android:inputType="textEmailAddress"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:textColor="#ffffff"
-        android:textColorHint="#6de8e8e8"
-        android:textSize="14dp" />
+        android:textColorHint="#8e8e8e"
+        android:textSize="14dp"
+        android:hint="Введите название" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,21 +51,23 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Метки"
         android:id="@+id/change_labale_point"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#ffffff"
-        android:textSize="12dp" />
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12dp"
+        android:layout_marginLeft="16dp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/change_doc_point"
-        android:inputType="textPassword"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
-        android:textColorHint="#c8e4e4e4"
+        android:textColorHint="#8e8e8e"
         android:hint="Введите метку"
         android:textSize="14dp" />
+
 </LinearLayout>

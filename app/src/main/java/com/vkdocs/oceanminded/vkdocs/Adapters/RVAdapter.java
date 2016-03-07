@@ -8,14 +8,18 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,6 +34,7 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.methods.VKApiDocs;
 import com.vk.sdk.api.model.VKApiDocument;
 import com.vk.sdk.api.model.VKDocsArray;
+import com.vkdocs.oceanminded.vkdocs.Activitys.MainActivity;
 import com.vkdocs.oceanminded.vkdocs.FileOpen;
 import com.vkdocs.oceanminded.vkdocs.R;
 
@@ -229,60 +234,80 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
     public void change(final int position){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(context); //create LayoutInflater for get view
+        View v = layoutInflater.inflate(R.layout.change_dialog, null,false); // create view for dialog
 
-        View v = LayoutInflater.from(context).inflate(R.layout.change_dialog, null);
-        builder.setView(LayoutInflater.from(context).inflate(R.layout.change_dialog,null));
         final EditText titleEditText = (EditText) v.findViewById(R.id.change_doc_title);
         final EditText pointEditText = (EditText) v.findViewById(R.id.change_doc_point);
-        builder.setPositiveButton("сохранить", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int docId = documentslist.get(position).id;
-                int ownrtId = documentslist.get(position).owner_id;
-                String ext = documentslist.get(position).ext;
-                String title = titleEditText.getText().toString()+"sad."+ext;
-                Log.d("Change",titleEditText.getText()+"");
-                Log.d("Change",pointEditText.getText()+"");
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(v)//add view in dialog
+                .setPositiveButton("Сохранить",null);
 
-                VKRequest changeRequest;
-                if(pointEditText.getText().toString() == null) {
-                    String tags = pointEditText.getText().toString();
-                    changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title));
-                }
-                else {
-                    String tags = pointEditText.getText().toString();
-                    changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title, "tags", tags));
-                }
-                changeRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        Toast.makeText(context,"Документ изменен",Toast.LENGTH_LONG);
-                    }
-
-                    @Override
-                    public void onError(VKError error) {
-                        super.onError(error);
-                        Log.d("del Doc Erroe",error.toString());
-                        Toast.makeText(context, "Не удалось изменить документ", Toast.LENGTH_LONG);
-                    }
-                });
-
-                /*if( titleEditText.getText().toString() == null ){
-                    dialog.dismiss();
-                }*/
-            }
-        });
         builder.setNegativeButton("отмена", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+
+        final AlertDialog mDialog = builder.create();
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positive = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setTextColor(Color.rgb(64, 102, 147));
+                Button negative = mDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negative.setTextColor(Color.rgb(64,102,147));
+                positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int docId = documentslist.get(position).id;
+                        int ownrtId = documentslist.get(position).owner_id;
+                        String ext = documentslist.get(position).ext;
+
+                        if (!TextUtils.isEmpty(titleEditText.getText().toString())) {
+                            Log.d("Title","test"+titleEditText.getText().toString());
+                            String title = titleEditText.getText().toString() + "." + ext;
+
+                            VKRequest changeRequest;
+                            if (pointEditText.getText().toString() == null) {
+                                Log.d("Change title", titleEditText.getText() + "");
+                                Log.d("Change tag", pointEditText.getText() + "");
+                                String tags = pointEditText.getText().toString();
+                                changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title));
+                            } else {
+                                Log.d("Change title", titleEditText.getText() + "");
+                                Log.d("Change tag", pointEditText.getText() + "");
+                                String tags = pointEditText.getText().toString();
+                                changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title, "tags", tags));
+                            }
+                            changeRequest.executeWithListener(new VKRequest.VKRequestListener() {
+                                @Override
+                                public void onComplete(VKResponse response) {
+                                    super.onComplete(response);
+                                    Toast.makeText(context, "Документ изменен", Toast.LENGTH_LONG);
+                                    mDialog.dismiss();
+                                }
+
+                                @Override
+                                public void onError(VKError error) {
+                                    super.onError(error);
+                                    Log.d("del Doc Erroe", error.toString());
+                                    Toast.makeText(context, "Не удалось изменить документ", Toast.LENGTH_LONG);
+                                }
+                            });
+
+                        } else {
+                            titleEditText.requestFocus();
+                        }
+                    }
+                });
+            }
+        });
+
+
+        mDialog.show();
 
     }
 
@@ -305,7 +330,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                         return true;
                     case R.id.menu_delete:
                         delete(position);
-                        ;
                         return true;
                     default:
                         return false;
@@ -427,8 +451,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
     public  String title(String s){
-        if(s.length() >=30){
-            s = s.substring(0,30) + "...";
+        if(s.length() >=24){
+            s = s.substring(0,24) + "...";
         }
         return s;
     }

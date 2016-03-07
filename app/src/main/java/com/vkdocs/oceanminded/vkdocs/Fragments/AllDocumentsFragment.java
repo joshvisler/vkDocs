@@ -3,6 +3,7 @@ package com.vkdocs.oceanminded.vkdocs.Fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -60,7 +61,7 @@ public class AllDocumentsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.fragmenta,container, false);
+        final View view = inflater.inflate(R.layout.fragmenta,container, false);
         notdosc =(TextView) view.findViewById(R.id.notdocs_text);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.vk_color);
@@ -79,6 +80,21 @@ public class AllDocumentsFragment extends Fragment {
         documentslist = getDocumentFromServer();
         adapter = new RVAdapter(documentslist);
         documenstListRV.setAdapter(adapter);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        documenstListRV.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+       // adapter.change(1,getContext());
+
 
         return view;
     }
