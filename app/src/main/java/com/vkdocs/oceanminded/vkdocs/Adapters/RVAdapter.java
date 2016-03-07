@@ -9,17 +9,27 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiDocs;
 import com.vk.sdk.api.model.VKApiDocument;
+import com.vk.sdk.api.model.VKDocsArray;
 import com.vkdocs.oceanminded.vkdocs.FileOpen;
 import com.vkdocs.oceanminded.vkdocs.R;
 
@@ -42,7 +52,7 @@ import java.util.Locale;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
     List<VKApiDocument> documentslist;
-    public Context context;
+    public  Context context;
     Locale russian = new Locale("ru");
     String[] newMonths = {
             "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -53,11 +63,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     private File folder;
 
 
-    public static class DocumentsHolder extends RecyclerView.ViewHolder{
+    public  class DocumentsHolder extends RecyclerView.ViewHolder{
         TextView documentTitle;
         TextView documentInfo;
         ImageView documentIcon;
         TextView documentIconText;
+        ImageButton documentMenu;
 
         public DocumentsHolder(View itemView) {
             super(itemView);
@@ -65,7 +76,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             documentInfo = (TextView) itemView.findViewById(R.id.doc_info);
             documentIcon = (ImageView) itemView.findViewById(R.id.chooser_folder_icon);
             documentIconText = (TextView) itemView.findViewById(R.id.doc_text_image);
+            documentMenu = (ImageButton) itemView.findViewById(R.id.doc_menu_button);
+
         }
+
+
+
     }
 
     public RVAdapter(List<VKApiDocument> list) {
@@ -106,6 +122,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             holder.documentIconText.setText(documentslist.get(position).ext);
             holder.documentIcon.setImageDrawable(new ColorDrawable(Color.parseColor("#e9ecf1")));
         }
+        holder.documentMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                docMenuShow(v,position);
+                Log.d("Menu","Clicked");
+            }
+        });
+
+
+
+
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +152,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                 }
             }
         });
+
+
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -160,6 +190,142 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
             }
         });
     }
+
+
+    public void save(final int position){
+        nameDocument = documentslist.get(position).title;
+        file = new File(folder.getAbsolutePath(), nameDocument);
+        if (file.exists()) {
+            nameDocument = documentslist.get(position).title+1;
+            DownloadDocument downloadDocument = new DownloadDocument();
+            downloadDocument.execute(documentslist.get(position).url);
+        } else {
+            DownloadDocument downloadDocument = new DownloadDocument();
+            downloadDocument.execute(documentslist.get(position).url);
+        }
+    }
+
+
+
+
+    public void delete(final int position){
+        int docId = documentslist.get(position).id;
+        int ownrtId = documentslist.get(position).owner_id;
+        VKRequest deleteRequest = new VKRequest("docs.delete", VKParameters.from("owner_id",ownrtId,"doc_id",docId));
+        deleteRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Toast.makeText(context, "Документ удален", Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.d("del Doc Erroe", error.toString());
+                Toast.makeText(context, "Не удалось удалить документ", Toast.LENGTH_LONG);
+            }
+        });
+    }
+
+    public void change(final int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        View v = LayoutInflater.from(context).inflate(R.layout.change_dialog, null);
+        builder.setView(LayoutInflater.from(context).inflate(R.layout.change_dialog,null));
+        final EditText titleEditText = (EditText) v.findViewById(R.id.change_doc_title);
+        final EditText pointEditText = (EditText) v.findViewById(R.id.change_doc_point);
+        builder.setPositiveButton("сохранить", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int docId = documentslist.get(position).id;
+                int ownrtId = documentslist.get(position).owner_id;
+                String ext = documentslist.get(position).ext;
+                String title = titleEditText.getText().toString()+"sad."+ext;
+                Log.d("Change",titleEditText.getText()+"");
+                Log.d("Change",pointEditText.getText()+"");
+
+
+                VKRequest changeRequest;
+                if(pointEditText.getText().toString() == null) {
+                    String tags = pointEditText.getText().toString();
+                    changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title));
+                }
+                else {
+                    String tags = pointEditText.getText().toString();
+                    changeRequest = new VKRequest("docs.edit", VKParameters.from("owner_id", ownrtId, "doc_id", docId, "title", title, "tags", tags));
+                }
+                changeRequest.executeWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        Toast.makeText(context,"Документ изменен",Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onError(VKError error) {
+                        super.onError(error);
+                        Log.d("del Doc Erroe",error.toString());
+                        Toast.makeText(context, "Не удалось изменить документ", Toast.LENGTH_LONG);
+                    }
+                });
+
+                /*if( titleEditText.getText().toString() == null ){
+                    dialog.dismiss();
+                }*/
+            }
+        });
+        builder.setNegativeButton("отмена", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+
+
+    public void docMenuShow(View v, final int position){
+        PopupMenu docMenu = new PopupMenu(context,v);
+        docMenu.inflate(R.menu.doc_menu);
+
+        docMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_save:
+                        save(position);
+                        ;
+                        return true;
+                    case R.id.menu_change:
+                        change(position);
+                        return true;
+                    case R.id.menu_delete:
+                        delete(position);
+                        ;
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+        docMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+
+            }
+        });
+        docMenu.show();
+    }
+
+
+
+
+
 
 
 
@@ -304,6 +470,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         }
         return result;
     }
+
+
 
     @Override
     public int getItemCount() {

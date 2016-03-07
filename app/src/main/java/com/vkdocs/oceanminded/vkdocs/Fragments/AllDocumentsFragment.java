@@ -43,12 +43,12 @@ public class AllDocumentsFragment extends Fragment {
     private RVAdapter adapter;
     public  int docParametr;
     public static int DOCS_COUNT = 20;
-    private SwipeRefreshLayout swipeRefreshLayout;;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
 
     public AllDocumentsFragment(int docType) {
         docParametr = docType;
-        // Required empty public constructor
     }
 
     @Override
@@ -118,6 +118,8 @@ public class AllDocumentsFragment extends Fragment {
 
         return false;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
