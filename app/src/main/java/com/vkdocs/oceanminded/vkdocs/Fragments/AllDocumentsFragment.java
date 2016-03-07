@@ -17,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiDocument;
 import com.vk.sdk.api.model.VKDocsArray;
+import com.vkdocs.oceanminded.vkdocs.Activitys.MainActivity;
 import com.vkdocs.oceanminded.vkdocs.Adapters.RVAdapter;
 import com.vkdocs.oceanminded.vkdocs.R;
 
@@ -80,16 +83,33 @@ public class AllDocumentsFragment extends Fragment {
         documentslist = getDocumentFromServer();
         adapter = new RVAdapter(documentslist);
         documenstListRV.setAdapter(adapter);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
         documenstListRV.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                Log.d("newState", newState + "");
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+//                int btn_initPosY=fab.getScrollY();
+                //int fabBottomMargin = 10;
+                int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                if(firstVisibleItem == 0){
+                    MainActivity.showViews();
+//                    fab.animate().cancel();
+//                    fab.animate().translationYBy(150);
+                 // fab.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    MainActivity.hideViews();
+                   // fab.setVisibility(View.VISIBLE);
+                    //fab.animate().cancel();
+                   // fab.animate().translationY(btn_initPosY);
+                }
             }
         });
 

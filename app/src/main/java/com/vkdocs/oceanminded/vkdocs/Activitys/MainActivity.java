@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.vk.sdk.api.VKApi;
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SearchView searchView;
+    private static FloatingActionButton fab;
+    private static Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +59,18 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new AllDocumentsFragment(8), "ПРОЧИЕ");
         adapter.addFragment(new AllDocumentsFragment(8), "ЗАГРУЖЕННЫЕ");
         viewPager.setAdapter(adapter);
+    }
+    static public void hideViews() {
+        fab.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
+        int fabBottomMargin = 50;
+        fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    static public void showViews() {
+        toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
     }
 
     @Override
@@ -82,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void guiInitialized() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(
 
                 new View.OnClickListener() {
