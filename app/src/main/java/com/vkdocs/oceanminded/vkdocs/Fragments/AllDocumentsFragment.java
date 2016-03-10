@@ -2,6 +2,7 @@ package com.vkdocs.oceanminded.vkdocs.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -189,45 +190,68 @@ public class AllDocumentsFragment extends Fragment {
     }
 
 
+    class GedData extends AsyncTask<Void,Void,ArrayList<VKApiDocument> >{
+
+        @Override
+        protected ArrayList<VKApiDocument> doInBackground(Void... params) {
+            final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
+            //VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR,"count",20), VKRequest.HttpMethod.GET, VKDocsArray.class);
+            VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", docParametr), VKRequest.HttpMethod.GET, VKDocsArray.class);
+            getdocs.executeSyncWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
+                    super.onProgress(progressType, bytesLoaded, bytesTotal);
+                }
+
+                @Override
+                public void onComplete(VKResponse response) {
+                    //resultList = new ArrayList<VKApiDocument>();
+                    VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
+                    for (VKApiDocument doc : docsArray) {
+                        resultList.add(doc);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+
+                @Override
+                public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                    super.attemptFailed(request, attemptNumber, totalAttempts);
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    super.onError(error);
+                }
+            });
+
+            return resultList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<VKApiDocument> vkApiDocuments) {
+            super.onPostExecute(vkApiDocuments);
+
+            for(VKApiDocument doc:vkApiDocuments){
+                Log.d("DjcName",doc.title);
+            }
+
+        }
+
+
+    }
 
     public ArrayList<VKApiDocument> getDocumentFromServer() {
-            final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
-        //VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR,"count",20), VKRequest.HttpMethod.GET, VKDocsArray.class);
-        VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", docParametr), VKRequest.HttpMethod.GET, VKDocsArray.class);
-        getdocs.executeSyncWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
-                super.onProgress(progressType, bytesLoaded, bytesTotal);
-            }
 
-            @Override
-            public void onComplete(VKResponse response)  {
-                //resultList = new ArrayList<VKApiDocument>();
-                VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
-                for (VKApiDocument doc : docsArray) {
-                    resultList.add(doc);
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                super.attemptFailed(request, attemptNumber, totalAttempts);
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-            }
-        });
-
+        ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
+        GedData data = new GedData();
+        /*resultList = data.doInBackground();
         if (resultList.isEmpty()){
             notdosc.setVisibility(View.VISIBLE);
         }
         else {
             notdosc.setVisibility(View.INVISIBLE);
-        }
-        return resultList;
+        }*/
+        return data.doInBackground();
     }
 
 
