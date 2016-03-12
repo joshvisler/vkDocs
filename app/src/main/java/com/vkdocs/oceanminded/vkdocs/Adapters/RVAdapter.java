@@ -3,6 +3,7 @@ package com.vkdocs.oceanminded.vkdocs.Adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -35,6 +36,7 @@ import com.vk.sdk.api.methods.VKApiDocs;
 import com.vk.sdk.api.model.VKApiDocument;
 import com.vk.sdk.api.model.VKDocsArray;
 import com.vkdocs.oceanminded.vkdocs.Activitys.MainActivity;
+import com.vkdocs.oceanminded.vkdocs.Activitys.UsersActivity;
 import com.vkdocs.oceanminded.vkdocs.FileOpen;
 import com.vkdocs.oceanminded.vkdocs.R;
 
@@ -57,7 +59,7 @@ import java.util.Locale;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
     List<VKApiDocument> documentslist;
-    public  Context context;
+    public Context context;
     Locale russian = new Locale("ru");
     String[] newMonths = {
             "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -68,12 +70,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     private File folder;
 
 
-    public  class DocumentsHolder extends RecyclerView.ViewHolder{
-        TextView documentTitle;
-        TextView documentInfo;
-        ImageView documentIcon;
-        TextView documentIconText;
-        ImageButton documentMenu;
+    public class DocumentsHolder extends RecyclerView.ViewHolder {
+        private TextView documentTitle;
+        private TextView documentInfo;
+        private ImageView documentIcon;
+        private TextView documentIconText;
+        private ImageButton documentMenu;
 
         public DocumentsHolder(View itemView) {
             super(itemView);
@@ -86,23 +88,23 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         }
 
 
-
     }
 
     public RVAdapter(List<VKApiDocument> list) {
         this.documentslist = new ArrayList<>(list);
         nameDocument = "";
-        folder = new File(Environment.getExternalStorageDirectory() +"/VkDocs");
+        folder = new File(Environment.getExternalStorageDirectory() + "/VkDocs");
         if (!folder.exists()) {
             folder.mkdirs();// создаем директорию
         }
     }
 
-    public void changeData(List<VKApiDocument> data){
+    public void changeData(List<VKApiDocument> data) {
         documentslist.clear();
         documentslist.addAll(data);
         notifyDataSetChanged();
     }
+
 
     @Override
     public DocumentsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -119,25 +121,20 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         holder.documentInfo.setText(convertSize(documentslist.get(position).size) + ", " + convertDate(documentslist.get(position).date));
 
 
-        if(documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
+        if (documentslist.get(position).isImage() || documentslist.get(position).isGif()) {
             holder.documentIconText.setText("");
             Picasso.with(context).load(documentslist.get(position).photo_100).into(holder.documentIcon);
-        }
-        else{
+        } else {
             holder.documentIconText.setText(documentslist.get(position).ext);
             holder.documentIcon.setImageDrawable(new ColorDrawable(Color.parseColor("#e9ecf1")));
         }
         holder.documentMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                docMenuShow(v,position);
-                Log.d("Menu","Clicked");
+                docMenuShow(v, position);
+                Log.d("Menu", "Clicked");
             }
         });
-
-
-
-
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +154,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                 }
             }
         });
-
 
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -197,11 +193,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
 
-    public void save(final int position){
+    public void save(final int position) {
         nameDocument = documentslist.get(position).title;
         file = new File(folder.getAbsolutePath(), nameDocument);
         if (file.exists()) {
-            nameDocument = documentslist.get(position).title+1;
+            nameDocument = documentslist.get(position).title + 1;
             DownloadDocument downloadDocument = new DownloadDocument();
             downloadDocument.execute(documentslist.get(position).url);
         } else {
@@ -211,12 +207,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
     }
 
 
-
-
-    public void delete(final int position){
+    public void delete(final int position) {
         int docId = documentslist.get(position).id;
         int ownrtId = documentslist.get(position).owner_id;
-        VKRequest deleteRequest = new VKRequest("docs.delete", VKParameters.from("owner_id",ownrtId,"doc_id",docId));
+        VKRequest deleteRequest = new VKRequest("docs.delete", VKParameters.from("owner_id", ownrtId, "doc_id", docId));
         deleteRequest.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -233,16 +227,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         });
     }
 
-    public void change(final int position){
+    public void change(final int position) {
         LayoutInflater layoutInflater = LayoutInflater.from(context); //create LayoutInflater for get view
-        View v = layoutInflater.inflate(R.layout.change_dialog, null,false); // create view for dialog
+        View v = layoutInflater.inflate(R.layout.change_dialog, null, false); // create view for dialog
 
         final EditText titleEditText = (EditText) v.findViewById(R.id.change_doc_title);
         final EditText pointEditText = (EditText) v.findViewById(R.id.change_doc_point);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(v)//add view in dialog
-                .setPositiveButton("Сохранить",null);
+                .setPositiveButton("Сохранить", null);
 
         builder.setNegativeButton("отмена", new DialogInterface.OnClickListener() {
             @Override
@@ -258,7 +252,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                 Button positive = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positive.setTextColor(Color.rgb(64, 102, 147));
                 Button negative = mDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setTextColor(Color.rgb(64,102,147));
+                negative.setTextColor(Color.rgb(64, 102, 147));
                 positive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -267,7 +261,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                         String ext = documentslist.get(position).ext;
 
                         if (!TextUtils.isEmpty(titleEditText.getText().toString())) {
-                            Log.d("Title","test"+titleEditText.getText().toString());
+                            Log.d("Title", "test" + titleEditText.getText().toString());
                             String title = titleEditText.getText().toString() + "." + ext;
 
                             VKRequest changeRequest;
@@ -311,6 +305,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
 
     }
 
+    public void send(final int position) {
+        Intent sendIntent = new Intent(context, UsersActivity.class);
+        sendIntent.putExtra("docId",documentslist.get(position).id);
+        Log.d("Doc ID",documentslist.get(position).id+"");
+        sendIntent.putExtra("owner_id",documentslist.get(position).owner_id);
+        Log.d("Owner ID",documentslist.get(position).owner_id+"");
+        context.startActivity(sendIntent);
+    }
 
 
     public void docMenuShow(View v, final int position){
@@ -323,10 +325,12 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
                 switch (item.getItemId()) {
                     case R.id.menu_save:
                         save(position);
-                        ;
                         return true;
                     case R.id.menu_change:
                         change(position);
+                        return true;
+                    case R.id.menu_send:
+                        send(position);
                         return true;
                     case R.id.menu_delete:
                         delete(position);

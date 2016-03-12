@@ -1,6 +1,7 @@
 package com.vkdocs.oceanminded.vkdocs.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class AllDocumentsFragment extends Fragment {
     private RVAdapter adapter;
     public  int docParametr;
     public static int DOCS_COUNT = 20;
+    private static FloatingActionButton fab;
     private SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -85,32 +87,18 @@ public class AllDocumentsFragment extends Fragment {
         adapter = new RVAdapter(documentslist);
         documenstListRV.setAdapter(adapter);
 
-        documenstListRV.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.d("newState", newState + "");
-            }
+        final View fabView = inflater.inflate(R.layout.fragmenta,container, false);
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
+        documenstListRV.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                //final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-//                int btn_initPosY=fab.getScrollY();
-                //int fabBottomMargin = 10;
-                int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                if(firstVisibleItem == 0){
-                    MainActivity.showViews();
-//                    fab.animate().cancel();
-//                    fab.animate().translationYBy(150);
-                 // fab.setVisibility(View.INVISIBLE);
-                }
-                else {
-                    MainActivity.hideViews();
-                   // fab.setVisibility(View.VISIBLE);
-                    //fab.animate().cancel();
-                   // fab.animate().translationY(btn_initPosY);
-                }
+                Log.d("changed", dx + ""+dy+"");
+                if(dy>0)
+                    fab.hide();
+                else
+                    fab.show();
             }
         });
 
@@ -259,5 +247,11 @@ public class AllDocumentsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }

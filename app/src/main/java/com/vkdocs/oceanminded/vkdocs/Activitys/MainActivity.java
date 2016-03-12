@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
         fab.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
 
         //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
-        int fabBottomMargin = 50;
-        fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        //int fabBottomMargin = 50;
+        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+
     }
 
     static public void showViews() {
@@ -102,13 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(
 
                 new View.OnClickListener() {
-                   @Override
+                    @Override
                     public void onClick(View view) {
                         shareFile();
                     }

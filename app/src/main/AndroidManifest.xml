@@ -39,7 +39,8 @@
             android:label="@string/title_activity_doc"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activitys.SettingsActivity" />
-        <activity android:name=".Activitys.ChoseFile"></activity>
+        <activity android:name=".Activitys.ChoseFile" />
+        <activity android:name=".Activitys.UsersActivity"></activity>
     </application>
 
 </manifest>
