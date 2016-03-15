@@ -1,5 +1,6 @@
 package com.vkdocs.oceanminded.vkdocs.Activitys;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import com.vkdocs.oceanminded.vkdocs.R;
 public class LoginActivity extends AppCompatActivity {
     private Button noConnectionButton;
     private TextView noConnectionText;
+    private ProgressBar mloading;
 
     private static final String[] sMyScope = new String[]{
             VKScope.FRIENDS,
@@ -38,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         noConnectionButton = (Button) findViewById(R.id.noConnection_button);
         noConnectionText = (TextView) findViewById(R.id.connection_error_text);
+        mloading = (ProgressBar)findViewById(R.id.progressBarLoading);
+        //mloading.setSystemUiVisibility(View.VISIBLE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -59,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKSdk.LoginState res) {
                 switch (res) {
                     case LoggedOut:
-
                         VKSdk.login(LoginActivity.this, sMyScope);
                         break;
                     case LoggedIn:
@@ -82,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
     private void userLoggedIn()
     {
         Intent openMainActivity = new Intent(this,MainActivity.class);
+        //mloading.setVisibility(View.GONE);
         startActivity(openMainActivity);
         finish();
     }
@@ -118,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting())
         {
+            //mloading.setVisibility(View.GONE);
             connection();
             return true;
         }
