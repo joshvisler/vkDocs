@@ -26,6 +26,11 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vkdocs.oceanminded.vkdocs.Adapters.ViewPagerAdapte;
 import com.vkdocs.oceanminded.vkdocs.Fragments.AllDocumentsFragment;
+import com.vkdocs.oceanminded.vkdocs.Fragments.AnimationFragment;
+import com.vkdocs.oceanminded.vkdocs.Fragments.ArchivFragment;
+import com.vkdocs.oceanminded.vkdocs.Fragments.DocsFragment;
+import com.vkdocs.oceanminded.vkdocs.Fragments.ImageFragment;
+import com.vkdocs.oceanminded.vkdocs.Fragments.OtherFragment;
 import com.vkdocs.oceanminded.vkdocs.R;
 
 import java.io.File;
@@ -51,22 +56,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapte adapter = new ViewPagerAdapte(getSupportFragmentManager());
-        adapter.addFragment(new AllDocumentsFragment(0), "ВСЕ");
-        adapter.addFragment(new AllDocumentsFragment(1), "ТЕКСТОВЫЕ");
-        adapter.addFragment(new AllDocumentsFragment(2), "АРХИВЫ");
-        adapter.addFragment(new AllDocumentsFragment(3), "АНИМАЦИЯ");
-        adapter.addFragment(new AllDocumentsFragment(4), "ИЗОБРАЖЕНИЯ");
-        adapter.addFragment(new AllDocumentsFragment(8), "ПРОЧИЕ");
-        adapter.addFragment(new AllDocumentsFragment(8), "ЗАГРУЖЕННЫЕ");
+        adapter.addFragment(new AllDocumentsFragment(), "ВСЕ");
+        adapter.addFragment(new DocsFragment(), "ТЕКСТОВЫЕ");
+        adapter.addFragment(new ArchivFragment(), "АРХИВЫ");
+        adapter.addFragment(new AnimationFragment(), "АНИМАЦИЯ");
+        adapter.addFragment(new ImageFragment(), "ИЗОБРАЖЕНИЯ");
+        adapter.addFragment(new OtherFragment(), "ПРОЧИЕ");
         viewPager.setAdapter(adapter);
+
     }
     static public void hideViews() {
         fab.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-
-        //FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) fab.getLayoutParams();
-        //int fabBottomMargin = 50;
-        //fab.animate().translationY(fab.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
-
     }
 
     static public void showViews() {
@@ -77,25 +77,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        // Inflate the menu; this adds items to the action bar if it is present.
         final MenuItem item = menu.findItem(R.id.action_search);
 
-       /* searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d("Search",query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.d("Search",newText);
-                return false;
-            }
-        });
-
-       */
         return true;
     }
 
@@ -149,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setWhen(System.currentTimeMillis());
+                .setWhen(System.currentTimeMillis()).setContentTitle("Отправка файла");;
         Notification uploadNotification = builder.getNotification();
 
 
@@ -157,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICKFILE_RESULT_CODE && data != null) {
             nm.notify(666,uploadNotification);
+
             final String filePath = data.getStringExtra("file");// get path from result
             String path = filePath.substring(0, filePath.lastIndexOf("/"));// get path without name
             String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);//get file name ( for example myText.txt)

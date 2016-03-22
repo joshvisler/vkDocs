@@ -18,7 +18,9 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKRequest;
 import com.vkdocs.oceanminded.vkdocs.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -42,15 +44,18 @@ public class LoginActivity extends AppCompatActivity {
         noConnectionButton = (Button) findViewById(R.id.noConnection_button);
         noConnectionText = (TextView) findViewById(R.id.connection_error_text);
         mloading = (ProgressBar)findViewById(R.id.progressBarLoading);
-        //mloading.setSystemUiVisibility(View.VISIBLE);
+        mloading.setSystemUiVisibility(View.VISIBLE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        isOnline(getApplicationContext());
+        connection();
         noConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                noConnectionButton.setVisibility(View.INVISIBLE);
+                noConnectionText.setVisibility(View.INVISIBLE);
+                mloading.setVisibility(View.VISIBLE);
                 connection();
             }
         });
@@ -58,29 +63,34 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void connection(){
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                switch (res) {
-                    case LoggedOut:
-                        VKSdk.login(LoginActivity.this, sMyScope);
-                        break;
-                    case LoggedIn:
-                        userLoggedIn();
-                        break;
-                    case Pending:
-                        break;
-                    case Unknown:
-                        break;
+    private void connection() {
+        if (isOnline()) {
+            VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
+                @Override
+                public void onResult(VKSdk.LoginState res) {
+                    switch (res) {
+                        case LoggedOut:
+                            VKSdk.login(LoginActivity.this, sMyScope);
+                            break;
+                        case LoggedIn:
+                            userLoggedIn();
+                            break;
+                        case Pending:
+                            break;
+                        case Unknown:
+                            break;
+                    }
                 }
-            }
 
-            @Override
-            public void onError(VKError error) {
-                Log.e("error", "Error Login " + error.toString());
-            }
-        });
+                @Override
+                public void onError(VKError error) {
+                    Log.e("error", "Error Login " + error.toString());
+                    noConnectionButton.setVisibility(View.VISIBLE);
+                    noConnectionText.setVisibility(View.VISIBLE);
+                    mloading.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void userLoggedIn()
@@ -117,18 +127,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public  boolean isOnline(Context context)
+    public  boolean isOnline()
     {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting())
         {
-            //mloading.setVisibility(View.GONE);
-            connection();
             return true;
         }
         noConnectionButton.setVisibility(View.VISIBLE);
         noConnectionText.setVisibility(View.VISIBLE);
+        mloading.setVisibility(View.GONE);
         return false;
     }
 }

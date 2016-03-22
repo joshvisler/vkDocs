@@ -97,6 +97,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DocumentsHolder> {
         if (!folder.exists()) {
             folder.mkdirs();// создаем директорию
         }
+
+    }
+
+    public RVAdapter(){
+        documentslist = new ArrayList<>();
+        nameDocument = "";
+        folder = new File(Environment.getExternalStorageDirectory() + "/VkDocs");
+        if (!folder.exists()) {
+            folder.mkdirs();// создаем директорию
+        }
     }
 
     public void changeData(List<VKApiDocument> data) {

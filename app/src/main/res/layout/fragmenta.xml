@@ -24,15 +24,41 @@
 
             <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Документы не найдены"
-                android:id="@+id/notdocs_text"
+                android:id="@+id/error_fragment_text"
                 android:gravity="center_vertical|center_horizontal"
                 android:visibility="invisible"
                 android:textColor="@color/material_blue_grey_800"
                 android:textSize="16dp"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_progresbar"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:progressDrawable="@drawable/progres_bar" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Повторить попытку"
+                android:id="@+id/try_text"
+                android:textColor="@color/vk_color"
+                android:padding="10dp"
+                android:visibility="invisible"
+                android:gravity="center"
+                android:layout_below="@+id/error_fragment_text"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
         </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 

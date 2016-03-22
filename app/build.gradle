@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'myAndroidKey'
+            keyAlias 'DocsAlis'
             keyPassword '5425158k'
-            storeFile file('/home/josh/ocean minded/vkdocs.jks')
-            storePassword '5425158l'
+            storeFile file('E:/repository/Docs.jks')
+            storePassword '5425158k'
         }
     }
     compileSdkVersion 23
@@ -31,10 +31,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile project(':vksdk_library')
-
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'

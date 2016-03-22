@@ -3,6 +3,8 @@ package com.vkdocs.oceanminded.vkdocs.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,33 +46,49 @@ import java.util.List;
 
 public class AllDocumentsFragment extends Fragment {
 
-    private TextView notdosc;
     private List<VKApiDocument> documentslist;
     private RecyclerView documenstListRV;
     private RVAdapter adapter;
-    public  int docParametr;
+    public  int mdocParametr;
     public static int DOCS_COUNT = 20;
     private static FloatingActionButton fab;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar progressBar;
+    private TextView errorText;
+    private TextView tryAgain;
 
-
-
-    public AllDocumentsFragment(int docType) {
-        docParametr = docType;
+    public AllDocumentsFragment() {
+        mdocParametr = 0;
+        documentslist = new ArrayList<>();
+        adapter = new RVAdapter();
+        Log.d("Constructor", "Hello Constructor");
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        Log.d("onCreate", "Hello onCreate()");
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         final View view = inflater.inflate(R.layout.fragmenta,container, false);
-        notdosc =(TextView) view.findViewById(R.id.notdocs_text);
+        tryAgain = (TextView) view.findViewById(R.id.try_text);
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateData();
+            }
+        });
+
+        errorText = (TextView) view.findViewById(R.id.error_fragment_text);
+        progressBar = (ProgressBar)  view.findViewById(R.id.fragment_progresbar);
+        progressBar.setVisibility(View.GONE);
+
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.vk_color);
         swipeRefreshLayout.setColorSchemeColors(Color.WHITE);
@@ -79,14 +98,11 @@ public class AllDocumentsFragment extends Fragment {
                 updateData();
             }
         });
+
         documenstListRV = (RecyclerView) view.findViewById(R.id.documents_recycleview);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        final LinearLayoutManager llm = new LinearLayoutManager(getContext());
         documenstListRV.setLayoutManager(llm);
         documenstListRV.setHasFixedSize(true);
-        documentslist = new ArrayList<>();
-        documentslist = getDocumentFromServer();
-        adapter = new RVAdapter(documentslist);
-        documenstListRV.setAdapter(adapter);
 
         final View fabView = inflater.inflate(R.layout.fragmenta,container, false);
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
@@ -100,48 +116,41 @@ public class AllDocumentsFragment extends Fragment {
                     fab.hide();
                 else
                     fab.show();
+
             }
         });
-
-       // adapter.change(1,getContext());
-
-
+        getDocumentFromServer();
+        if(getDocumentFromServer() != null) {
+            errorText.setVisibility(View.GONE);
+        }
         return view;
     }
 
+
     public ArrayList<VKApiDocument>  search(String searchQueary){
         ArrayList<VKApiDocument> result = new ArrayList<>();
-
         for(VKApiDocument queryDoc : documentslist){
             if(queryDoc.title.contains(searchQueary)){
                 result.add(queryDoc);
             }
         }
         if (result.isEmpty()){
-            notdosc.setVisibility(View.VISIBLE);
+            errorText.setText("Ничего не найденно");
+            errorText.setVisibility(View.VISIBLE);
         }
         else {
-            notdosc.setVisibility(View.INVISIBLE);
+            errorText.setVisibility(View.INVISIBLE);
         }
 
         return result;
     }
 
-
-
-
     public void updateData(){
-
-        if(getDocumentFromServer().size() != documentslist.size() ) {
-            documentslist = getDocumentFromServer();
-            adapter.changeData(documentslist);
-        }
-
+        getDocumentFromServer();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         return false;
     }
 
@@ -150,7 +159,6 @@ public class AllDocumentsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        //inflater.inflate(R.menu.menu_main, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -177,15 +185,24 @@ public class AllDocumentsFragment extends Fragment {
             }
         });
     }
-
+    public  boolean isOnline(Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting())
+        {
+            tryAgain.setVisibility(View.GONE);
+            return true;
+        }
+        return false;
+    }
 
     class GedData extends AsyncTask<Void,Void,ArrayList<VKApiDocument> >{
-
         @Override
         protected ArrayList<VKApiDocument> doInBackground(Void... params) {
-            final ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
-            //VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", DOCS_PARAMETR,"count",20), VKRequest.HttpMethod.GET, VKDocsArray.class);
-            VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", docParametr), VKRequest.HttpMethod.GET, VKDocsArray.class);
+            Log.d("Load Data", "Hello Load Data");
+            documentslist.clear();
+            VKRequest getdocs = new VKRequest("docs.get", VKParameters.from("type", mdocParametr), VKRequest.HttpMethod.GET, VKDocsArray.class);
             getdocs.executeSyncWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
@@ -194,12 +211,14 @@ public class AllDocumentsFragment extends Fragment {
 
                 @Override
                 public void onComplete(VKResponse response) {
-                    //resultList = new ArrayList<VKApiDocument>();
                     VKDocsArray docsArray = (VKDocsArray) response.parsedModel;
                     for (VKApiDocument doc : docsArray) {
-                        resultList.add(doc);
+                        if(!documentslist.contains(doc))
+                        documentslist.add(doc);
                         swipeRefreshLayout.setRefreshing(false);
                     }
+                    progressBar.setVisibility(View.GONE);
+                    documenstListRV.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -213,34 +232,51 @@ public class AllDocumentsFragment extends Fragment {
                 }
             });
 
-            return resultList;
+            Log.d("Res Size","size = "+documentslist.size());
+            //adapter = new RVAdapter(documentslist);
+            return (ArrayList<VKApiDocument>) documentslist;
         }
 
         @Override
         protected void onPostExecute(ArrayList<VKApiDocument> vkApiDocuments) {
-            super.onPostExecute(vkApiDocuments);
-
+            Log.d("onpost","Fuck post");
             for(VKApiDocument doc:vkApiDocuments){
                 Log.d("DjcName",doc.title);
             }
-
         }
-
-
     }
 
     public ArrayList<VKApiDocument> getDocumentFromServer() {
+        if (isOnline(getContext())) {
+            GedData data = new GedData();
+            ArrayList<VKApiDocument> resultList = new ArrayList<VKApiDocument>(data.doInBackground());
+               Log.d("Count",adapter.getItemCount()+"");
+            adapter.changeData(resultList);
+            documenstListRV.setAdapter(adapter);
+            if(adapter.getItemCount()<=0)
+            {
+                errorText.setVisibility(View.VISIBLE);
+                errorText.setText("Документы отсутствуют");
+            }
+            else {
+                errorText.setVisibility(View.GONE);
+                tryAgain.setVisibility(View.GONE);
+            }
 
-        ArrayList<VKApiDocument> resultList  = new ArrayList<VKApiDocument>();
-        GedData data = new GedData();
-        /*resultList = data.doInBackground();
-        if (resultList.isEmpty()){
-            notdosc.setVisibility(View.VISIBLE);
+
+            return resultList;
         }
-        else {
-            notdosc.setVisibility(View.INVISIBLE);
-        }*/
-        return data.doInBackground();
+        else if(adapter.getItemCount()<=0){
+            errorText.setVisibility(View.VISIBLE);
+            errorText.setText("Отсутствует соединение");
+            tryAgain.setVisibility(View.VISIBLE);
+        }
+        else if(adapter.getItemCount()>0)
+        {
+            Toast.makeText(getContext(),"Отсутствует соединение ",Toast.LENGTH_SHORT).show();
+        }
+        swipeRefreshLayout.setRefreshing(false);
+        return null;
     }
 
 
